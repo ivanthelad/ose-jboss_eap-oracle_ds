@@ -137,12 +137,21 @@ function generate_datasource() {
                     <connection-url>jdbc:oracle:thin:@(description=(enable=broken)(address_list=(load_balance=on)(failover=on)(address=(protocol=tcp)(host=$5)(port=$6))(address=(protocol=tcp)(host=$5)(port=$6)))(connect_data=(service_name=$7)(failover_mode=(type=select)(method=basic))))</connection-url>
                     <driver-class>oracle.jdbc.OracleDriver</driver-class>
                     <driver>${10}</driver>
-                    <pool>
-                        <min-pool-size>25</min-pool-size>
-                        <max-pool-size>50</max-pool-size>
-                        <prefill>true</prefill>
-                        <use-strict-min>true</use-strict-min>
-                    </pool>
+                    
+   if [ -n "$min_pool_size" ] || [ -n "$max_pool_size" ]; then
+        ds="$ds
+                      <pool>"
+        if [ -n "$min_pool_size" ]; then
+          ds="$ds
+                          <min-pool-size>$min_pool_size</min-pool-size>"
+        fi
+        if [ -n "$max_pool_size" ]; then
+          ds="$ds
+                          <max-pool-size>$max_pool_size</max-pool-size>"
+        fi
+        ds="$ds
+                      </pool>"
+      fi
                     <security>
                         <user-name>$3</user-name>
                         <password>$4</password>
